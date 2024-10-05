@@ -1,53 +1,43 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    
-    // Показати форму входу
-    function showLogin() {
-        loginForm.style.display = 'block';
-        registerForm.style.display = 'none';
-    }
+function cambiar_login() {
+  document.querySelector('.cont_forms').className = "cont_forms cont_forms_active_login";  
+document.querySelector('.cont_form_login').style.display = "block";
+document.querySelector('.cont_form_sign_up').style.opacity = "0";               
 
-    // Показати форму реєстрації
-    function showRegister() {
-        registerForm.style.display = 'block';
-        loginForm.style.display = 'none';
-    }
+setTimeout(function(){  document.querySelector('.cont_form_login').style.opacity = "1"; },400);  
+  
+setTimeout(function(){    
+document.querySelector('.cont_form_sign_up').style.display = "none";
+},200);  
+  }
 
-    // Симуляція входу
-    async function login(event) {
-        event.preventDefault();
-        const formData = new FormData(loginForm);
-        const response = await fetch('/login', {
-            method: 'POST',
-            body: formData,
-        });
+function cambiar_sign_up(at) {
+  document.querySelector('.cont_forms').className = "cont_forms cont_forms_active_sign_up";
+  document.querySelector('.cont_form_sign_up').style.display = "block";
+document.querySelector('.cont_form_login').style.opacity = "0";
+  
+setTimeout(function(){  document.querySelector('.cont_form_sign_up').style.opacity = "1";
+},100);  
 
-        if (response.ok) {
-            alert("Успішний вхід!");
-        } else {
-            alert("Помилка входу!");
-        }
-    }
+setTimeout(function(){   document.querySelector('.cont_form_login').style.display = "none";
+},400);  
 
-    // Симуляція реєстрації
-    async function register(event) {
-        event.preventDefault();
-        const formData = new FormData(registerForm);
-        const response = await fetch('/register', {
-            method: 'POST',
-            body: formData,
-        });
 
-        if (response.ok) {
-            alert("Успішна реєстрація!");
-        } else {
-            alert("Помилка реєстрації!");
-        }
-    }
+}    
 
-    window.showLogin = showLogin;
-    window.showRegister = showRegister;
-    window.login = login;
-    window.register = register;
-});
+
+
+function ocultar_login_sign_up() {
+
+document.querySelector('.cont_forms').className = "cont_forms";  
+document.querySelector('.cont_form_sign_up').style.opacity = "0";               
+document.querySelector('.cont_form_login').style.opacity = "0"; 
+
+setTimeout(function(){
+document.querySelector('.cont_form_sign_up').style.display = "none";
+document.querySelector('.cont_form_login').style.display = "none";
+},500);  
+  
+  }
+
+
+
