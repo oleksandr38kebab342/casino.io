@@ -27,6 +27,32 @@
             padding: 10px 20px;
             cursor: pointer;
         }
+        #notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+        }
+        #notification-content {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        #notification button {
+            font-size: 16px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -36,12 +62,61 @@
         <button class="spin-button" onclick="spin()">Крутити</button>
     </div>
 
+    <div id="notification">
+        <div id="notification-content"></div>
+        <button onclick="closeNotification()">Гаразд</button>
+    </div>
+
     <script>
         let balance = 1000;
+        let userId = null;
 
+        // Функція для отримання user_id з URL
+        function getUserIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('user_id');
+        }
+
+        // Функція для відображення сповіщення
+        function showNotification(message) {
+            document.getElementById('notification-content').innerText = message;
+            document.getElementById('notification').style.display = 'block';
+        }
+
+        // Закрити сповіщення
+        function closeNotification() {
+            document.getElementById('notification').style.display = 'none';
+        }
+
+        // Функція для отримання балансу з сервера
+        function getBalanceFromServer() {
+            fetch(`http://localhost:5000/get_balance/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    balance = data.balance;
+                    document.getElementById('balance').innerText = balance;
+                })
+                .catch(error => console.error('Error fetching balance:', error));
+        }
+
+        // Функція для оновлення балансу на сервері
+        function updateBalanceOnServer() {
+            fetch('http://localhost:5000/update_balance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: userId, balance: balance }),
+            })
+                .then(response => response.json())
+                .then(data => console.log('Balance updated:', data))
+                .catch(error => console.error('Error updating balance:', error));
+        }
+
+        // Функція для обробки кручення рулетки
         function spin() {
             if (balance < 50) {
-                alert("Недостатньо очків для гри.");
+                showNotification("Недостатньо очків для гри.");
                 return;
             }
             balance -= 50;
@@ -64,8 +139,21 @@
             }
             balance += points;
             document.getElementById('balance').innerText = balance;
-            alert(`Ви виграли ${points} очків!`);
+            showNotification(`Ви виграли ${points} очків!`);
+
+            // Оновлення балансу на сервері
+            updateBalanceOnServer();
         }
+
+        // Викликаємо функцію після завантаження сторінки
+        window.onload = function() {
+            userId = getUserIdFromUrl();
+            if (userId) {
+                getBalanceFromServer();
+            } else {
+                console.error("user_id не знайдено в URL");
+            }
+        };
 
         // Встановлення теми в залежності від налаштувань користувача
         const userTheme = window.Telegram.WebApp.themeParams;
