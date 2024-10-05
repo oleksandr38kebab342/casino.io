@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Казино Рулетка</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .balance {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .roulette {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .spin-button {
+            font-size: 24px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="balance">Баланс: <span id="balance">1000</span> очків</div>
+        <div class="roulette" id="roulette">🍒🍋🍉</div>
+        <button class="spin-button" onclick="spin()">Крутити</button>
+    </div>
+
+    <script>
+        let balance = 1000;
+
+        function spin() {
+            if (balance < 50) {
+                alert("Недостатньо очків для гри.");
+                return;
+            }
+            balance -= 50;
+            document.getElementById('balance').innerText = balance;
+
+            const emojis = ['🍒', '🍋', '🍉', '⭐', '🔔'];
+            const result = [];
+            for (let i = 0; i < 3; i++) {
+                result.push(emojis[Math.floor(Math.random() * emojis.length)]);
+            }
+            document.getElementById('roulette').innerText = result.join('');
+
+            let points = 0;
+            if (result[0] === result[1] && result[1] === result[2]) {
+                if (result[0] === '🍒') points = 150;
+                else if (result[0] === '🍋') points = 100;
+                else if (result[0] === '🍉') points = 50;
+                else if (result[0] === '⭐') points = 10;
+                else if (result[0] === '🔔') points = 200;
+            }
+            balance += points;
+            document.getElementById('balance').innerText = balance;
+            alert(`Ви виграли ${points} очків!`);
+        }
+
+        // Встановлення теми в залежності від налаштувань користувача
+        const userTheme = window.Telegram.WebApp.themeParams;
+        document.documentElement.style.setProperty('--bg-color', userTheme.bg_color || '#ffffff');
+        document.documentElement.style.setProperty('--text-color', userTheme.text_color || '#000000');
+    </script>
+</body>
+</html>
