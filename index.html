@@ -194,7 +194,25 @@
             }
             balance += points;
             document.getElementById('balance').innerText = balance;
+
+            // Оновлюємо баланс на сервері
+            updateBalance(balance);
             showNotification(`Ви виграли ${points} очків!`);
+        }
+
+        // Функція для оновлення балансу через AJAX
+        function updateBalance(newBalance) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/update_balance', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log('Баланс оновлено на сервері');
+                } else {
+                    console.error('Помилка оновлення балансу');
+                }
+            };
+            xhr.send('balance=' + newBalance);
         }
 
         // Встановлення теми в залежності від налаштувань користувача
