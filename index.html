@@ -53,11 +53,50 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="password"] {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+        }
+        button {
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="balance">Баланс: <span id="balance">1000</span> очків</div>
+        <h2>Казино Рулетка</h2>
+        
+        <!-- Форма входу -->
+        <h3>Вхід</h3>
+        <form method="POST" action="/login">
+            <input type="text" name="username" placeholder="Логін" required>
+            <br>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <br>
+            <button type="submit">Увійти</button>
+        </form>
+        
+        <!-- Форма реєстрації -->
+        <h3>Реєстрація</h3>
+        <form method="POST" action="/register">
+            <input type="text" name="username" placeholder="Логін" required>
+            <br>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <br>
+            <button type="submit">Зареєструватися</button>
+        </form>
+
+        <!-- Блок казино (відображається після входу) -->
+        <div class="balance">Ваш баланс: <span id="balance">1000</span> очків</div>
         <div class="roulette" id="roulette">🍒🍋🍉</div>
         <button class="spin-button" onclick="spin()">Крутити</button>
     </div>
@@ -69,13 +108,6 @@
 
     <script>
         let balance = 1000;
-        let userId = null;
-
-        // Функція для отримання user_id з URL
-        function getUserIdFromUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('user_id');
-        }
 
         // Функція для відображення сповіщення
         function showNotification(message) {
@@ -86,29 +118,6 @@
         // Закрити сповіщення
         function closeNotification() {
             document.getElementById('notification').style.display = 'none';
-        }
-
-        // Функція для отримання балансу з сервера
-        function getBalanceFromServer() {
-            fetch(`https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendMessage?chat_id=${userId}&text=/get_balance`)
-                .then(response => response.json())
-                .then(data => {
-                    // Парсинг відповіді бота
-                    let balanceText = data.result.text;
-                    balance = parseInt(balanceText.split(':')[1].trim());
-                    document.getElementById('balance').innerText = balance;
-                })
-                .catch(error => console.error('Error fetching balance:', error));
-        }
-
-        // Функція для оновлення балансу на сервері
-        function updateBalanceOnServer() {
-            fetch(`https://api.telegram.org/bot<7840425281:AAGAAlF80ZpDPZVcnK87PHMJiJ6KcHLiAMQ>/sendMessage?chat_id=${userId}&text=/update_balance ${userId} ${balance}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Balance updated:', data);
-                })
-                .catch(error => console.error('Error updating balance:', error));
         }
 
         // Функція для обробки кручення рулетки
@@ -138,25 +147,14 @@
             balance += points;
             document.getElementById('balance').innerText = balance;
             showNotification(`Ви виграли ${points} очків!`);
-
-            // Оновлення балансу на сервері
-            updateBalanceOnServer();
         }
 
-        // Викликаємо функцію після завантаження сторінки
-        window.onload = function() {
-            userId = getUserIdFromUrl();
-            if (userId) {
-                getBalanceFromServer();
-            } else {
-                console.error("user_id не знайдено в URL");
-            }
-        };
-
         // Встановлення теми в залежності від налаштувань користувача
-        const userTheme = window.Telegram.WebApp.themeParams;
-        document.documentElement.style.setProperty('--bg-color', userTheme.bg_color || '#ffffff');
-        document.documentElement.style.setProperty('--text-color', userTheme.text_color || '#000000');
+        const userTheme = window.Telegram ? window.Telegram.WebApp.themeParams : null;
+        if (userTheme) {
+            document.documentElement.style.setProperty('--bg-color', userTheme.bg_color || '#ffffff');
+            document.documentElement.style.setProperty('--text-color', userTheme.text_color || '#000000');
+        }
     </script>
 </body>
 </html>
