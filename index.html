@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Казино Рулетка</title>
+    <title>Casino</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--bg-color, #ffffff);
+            color: var(--text-color, #000000);
         }
-        .container {
+        .casino-section {
+            display: none;
             text-align: center;
-            margin-top: 50px;
+            margin-top: 20px;
         }
         .balance {
             font-size: 24px;
@@ -20,105 +21,65 @@
         }
         .roulette {
             font-size: 48px;
-            margin-bottom: 20px;
+            margin: 20px 0;
         }
         .spin-button {
-            font-size: 24px;
             padding: 10px 20px;
-            cursor: pointer;
+            font-size: 16px;
         }
         #notification {
+            display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
             text-align: center;
-            z-index: 1000;
-            display: none;
-        }
-        #notification-content {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-        #notification button {
-            font-size: 16px;
-            padding: 5px 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        form {
-            margin-bottom: 20px;
-            display: none;
-        }
-        input[type="text"], input[type="password"] {
-            padding: 10px;
-            margin: 10px 0;
-            width: 80%;
-        }
-        button {
-            font-size: 16px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .auth-buttons {
-            margin-bottom: 20px;
-        }
-        .auth-buttons button {
-            margin: 10px;
-        }
-        .casino-section {
-            display: none;
+            padding-top: 20%;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Казино Рулетка</h2>
-        
-        <!-- Кнопки для вибору Входу чи Реєстрації -->
-        <div class="auth-buttons">
-            <button onclick="showLogin()">Вхід</button>
-            <button onclick="showRegister()">Реєстрація</button>
-        </div>
+    <h1>Welcome to the Casino</h1>
 
-        <!-- Форма входу -->
-        <h3>Вхід</h3>
-        <form id="login-form" method="POST" action="/login">
-            <input type="text" name="username" placeholder="Логін" required>
+    <!-- Форма для входу -->
+    <div id="login-form">
+        <h2>Login</h2>
+        <form onsubmit="login(event)">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
             <br>
-            <input type="password" name="password" placeholder="Пароль" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
             <br>
-            <button type="submit" onclick="login(event)">Увійти</button>
+            <button type="submit">Login</button>
         </form>
-        
-        <!-- Форма реєстрації -->
-        <h3>Реєстрація</h3>
-        <form id="register-form" method="POST" action="/register">
-            <input type="text" name="username" placeholder="Логін" required>
-            <br>
-            <input type="password" name="password" placeholder="Пароль" required>
-            <br>
-            <button type="submit" onclick="register(event)">Зареєструватися</button>
-        </form>
-
-        <!-- Блок казино (відображається після входу) -->
-        <div class="casino-section">
-            <div class="balance">Ваш баланс: <span id="balance">1000</span> очків</div>
-            <div class="roulette" id="roulette">🍒🍋🍉</div>
-            <button class="spin-button" onclick="spin()">Крутити</button>
-        </div>
     </div>
 
+    <!-- Форма для реєстрації -->
+    <div id="register-form" style="display:none;">
+        <h2>Register</h2>
+        <form onsubmit="register(event)">
+            <label for="new-username">Username:</label>
+            <input type="text" id="new-username" name="username" required>
+            <br>
+            <label for="new-password">Password:</label>
+            <input type="password" id="new-password" name="password" required>
+            <br>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <!-- Блок казино (відображається після входу) -->
+    <div class="casino-section">
+        <div class="balance">Ваш баланс: <span id="balance">1000</span> очків</div>
+        <div class="roulette" id="roulette">🍒🍋🍉</div>
+        <button class="spin-button" onclick="spin()">Крутити</button>
+    </div>
+
+    <!-- Сповіщення -->
     <div id="notification">
         <div id="notification-content"></div>
         <button onclick="closeNotification()">Гаразд</button>
@@ -156,7 +117,6 @@
             event.preventDefault();
             isLoggedIn = true;
             document.getElementById('login-form').style.display = 'none';
-            document.querySelector('.auth-buttons').style.display = 'none';
             document.querySelector('.casino-section').style.display = 'block';
             showNotification("Ви увійшли в систему!");
         }
@@ -194,25 +154,6 @@
             }
             balance += points;
             document.getElementById('balance').innerText = balance;
-
-            // Оновлюємо баланс на сервері
-            updateBalance(balance);
-            showNotification(`Ви виграли ${points} очків!`);
-        }
-
-        // Функція для оновлення балансу через AJAX
-        function updateBalance(newBalance) {
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/update_balance', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    console.log('Баланс оновлено на сервері');
-                } else {
-                    console.error('Помилка оновлення балансу');
-                }
-            };
-            xhr.send('balance=' + newBalance);
         }
 
         // Встановлення теми в залежності від налаштувань користувача
