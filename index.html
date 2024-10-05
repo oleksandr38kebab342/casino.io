@@ -55,6 +55,7 @@
         }
         form {
             margin-bottom: 20px;
+            display: none;
         }
         input[type="text"], input[type="password"] {
             padding: 10px;
@@ -69,36 +70,53 @@
             border: none;
             cursor: pointer;
         }
+        .auth-buttons {
+            margin-bottom: 20px;
+        }
+        .auth-buttons button {
+            margin: 10px;
+        }
+        .casino-section {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Казино Рулетка</h2>
         
+        <!-- Кнопки для вибору Входу чи Реєстрації -->
+        <div class="auth-buttons">
+            <button onclick="showLogin()">Вхід</button>
+            <button onclick="showRegister()">Реєстрація</button>
+        </div>
+
         <!-- Форма входу -->
         <h3>Вхід</h3>
-        <form method="POST" action="/login">
+        <form id="login-form" method="POST" action="/login">
             <input type="text" name="username" placeholder="Логін" required>
             <br>
             <input type="password" name="password" placeholder="Пароль" required>
             <br>
-            <button type="submit">Увійти</button>
+            <button type="submit" onclick="login(event)">Увійти</button>
         </form>
         
         <!-- Форма реєстрації -->
         <h3>Реєстрація</h3>
-        <form method="POST" action="/register">
+        <form id="register-form" method="POST" action="/register">
             <input type="text" name="username" placeholder="Логін" required>
             <br>
             <input type="password" name="password" placeholder="Пароль" required>
             <br>
-            <button type="submit">Зареєструватися</button>
+            <button type="submit" onclick="register(event)">Зареєструватися</button>
         </form>
 
         <!-- Блок казино (відображається після входу) -->
-        <div class="balance">Ваш баланс: <span id="balance">1000</span> очків</div>
-        <div class="roulette" id="roulette">🍒🍋🍉</div>
-        <button class="spin-button" onclick="spin()">Крутити</button>
+        <div class="casino-section">
+            <div class="balance">Ваш баланс: <span id="balance">1000</span> очків</div>
+            <div class="roulette" id="roulette">🍒🍋🍉</div>
+            <button class="spin-button" onclick="spin()">Крутити</button>
+        </div>
     </div>
 
     <div id="notification">
@@ -108,6 +126,7 @@
 
     <script>
         let balance = 1000;
+        let isLoggedIn = false;
 
         // Функція для відображення сповіщення
         function showNotification(message) {
@@ -118,6 +137,35 @@
         // Закрити сповіщення
         function closeNotification() {
             document.getElementById('notification').style.display = 'none';
+        }
+
+        // Показати форму входу
+        function showLogin() {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'none';
+        }
+
+        // Показати форму реєстрації
+        function showRegister() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+        }
+
+        // Симуляція входу
+        function login(event) {
+            event.preventDefault();
+            isLoggedIn = true;
+            document.getElementById('login-form').style.display = 'none';
+            document.querySelector('.auth-buttons').style.display = 'none';
+            document.querySelector('.casino-section').style.display = 'block';
+            showNotification("Ви увійшли в систему!");
+        }
+
+        // Симуляція реєстрації
+        function register(event) {
+            event.preventDefault();
+            showNotification("Реєстрація пройшла успішно. Тепер ви можете увійти.");
+            document.getElementById('register-form').style.display = 'none';
         }
 
         // Функція для обробки кручення рулетки
