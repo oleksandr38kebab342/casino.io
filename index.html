@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -90,7 +90,7 @@
 
         // Функція для отримання балансу з сервера
         function getBalanceFromServer() {
-            fetch(`http://localhost:5000/get_balance/${userId}`)
+            fetch(`http://127.0.0.1:5000/get_balance/${userId}`)
                 .then(response => response.json())
                 .then(data => {
                     balance = data.balance;
@@ -101,7 +101,7 @@
 
         // Функція для оновлення балансу на сервері
         function updateBalanceOnServer() {
-            fetch('http://localhost:5000/update_balance', {
+            fetch('http://127.0.0.1:5000/update_balance', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -132,10 +132,10 @@
             let points = 0;
             if (result[0] === result[1] && result[1] === result[2]) {
                 if (result[0] === '🍒') points = 150;
-                else if (result[0] === '🍋') points = 100;
-                else if (result[0] === '🍉') points = 50;
-                else if (result[0] === '⭐') points = 10;
-                else if (result[0] === '🔔') points = 200;
+                else if (result[0] === '🍋') points = 1000;
+                else if (result[0] === '🍉') points = 500;
+                else if (result[0] === '⭐') points = 1000;
+                else if (result[0] === '🔔') points = 2000;
             }
             balance += points;
             document.getElementById('balance').innerText = balance;
