@@ -1,167 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Casino</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: var(--bg-color, #ffffff);
-            color: var(--text-color, #000000);
-        }
-        .casino-section {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-        }
-        .balance {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        .roulette {
-            font-size: 48px;
-            margin: 20px 0;
-        }
-        .spin-button {
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-        #notification {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            text-align: center;
-            padding-top: 20%;
-        }
-    </style>
+    <title>Казино Рулетка</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Welcome to the Casino</h1>
+    <div class="cotn_principal">
+        <div class="cont_centrar">
+            <div class="cont_login">
+                <div class="cont_info_log_sign_up">
+                    <div class="col_md_login">
+                        <div class="cont_ba_opcitiy">
+                            <h2>Вхід</h2>
+                            <p>У вас уже є обліковий запис?</p>
+                            <button class="btn_login" onclick="showLogin()">Вхід</button>
+                        </div>
+                    </div>
+                    <div class="col_md_sign_up">
+                        <div class="cont_ba_opcitiy">
+                            <h2>Реєстрація</h2>
+                            <p>Ще не зареєстровані?</p>
+                            <button class="btn_sign_up" onclick="showRegister()">Зареєструватися</button>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Форма для входу -->
-    <div id="login-form">
-        <h2>Login</h2>
-        <form onsubmit="login(event)">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            <br>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <br>
-            <button type="submit">Login</button>
-        </form>
+                <div class="cont_forms">
+                    <!-- Форма входу -->
+                    <div class="cont_form_login">
+                        <h2>Вхід</h2>
+                        <form id="login-form" method="POST" action="/login">
+                            <input type="text" name="username" placeholder="Логін" required>
+                            <input type="password" name="password" placeholder="Пароль" required>
+                            <button type="submit" onclick="login(event)">Увійти</button>
+                        </form>
+                    </div>
+
+                    <!-- Форма реєстрації -->
+                    <div class="cont_form_sign_up">
+                        <h2>Реєстрація</h2>
+                        <form id="register-form" method="POST" action="/register">
+                            <input type="text" name="email" placeholder="E-mail" required>
+                            <input type="text" name="username" placeholder="Логін" required>
+                            <input type="password" name="password" placeholder="Пароль" required>
+                            <input type="password" name="confirm_password" placeholder="Повторіть пароль" required>
+                            <button type="submit" onclick="register(event)">Зареєструватися</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Форма для реєстрації -->
-    <div id="register-form" style="display:none;">
-        <h2>Register</h2>
-        <form onsubmit="register(event)">
-            <label for="new-username">Username:</label>
-            <input type="text" id="new-username" name="username" required>
-            <br>
-            <label for="new-password">Password:</label>
-            <input type="password" id="new-password" name="password" required>
-            <br>
-            <button type="submit">Register</button>
-        </form>
-    </div>
-
-    <!-- Блок казино (відображається після входу) -->
-    <div class="casino-section">
-        <div class="balance">Ваш баланс: <span id="balance">1000</span> очків</div>
-        <div class="roulette" id="roulette">🍒🍋🍉</div>
-        <button class="spin-button" onclick="spin()">Крутити</button>
-    </div>
-
-    <!-- Сповіщення -->
-    <div id="notification">
-        <div id="notification-content"></div>
-        <button onclick="closeNotification()">Гаразд</button>
-    </div>
-
-    <script>
-        let balance = 1000;
-        let isLoggedIn = false;
-
-        // Функція для відображення сповіщення
-        function showNotification(message) {
-            document.getElementById('notification-content').innerText = message;
-            document.getElementById('notification').style.display = 'block';
-        }
-
-        // Закрити сповіщення
-        function closeNotification() {
-            document.getElementById('notification').style.display = 'none';
-        }
-
-        // Показати форму входу
-        function showLogin() {
-            document.getElementById('login-form').style.display = 'block';
-            document.getElementById('register-form').style.display = 'none';
-        }
-
-        // Показати форму реєстрації
-        function showRegister() {
-            document.getElementById('login-form').style.display = 'none';
-            document.getElementById('register-form').style.display = 'block';
-        }
-
-        // Симуляція входу
-        function login(event) {
-            event.preventDefault();
-            isLoggedIn = true;
-            document.getElementById('login-form').style.display = 'none';
-            document.querySelector('.casino-section').style.display = 'block';
-            showNotification("Ви увійшли в систему!");
-        }
-
-        // Симуляція реєстрації
-        function register(event) {
-            event.preventDefault();
-            showNotification("Реєстрація пройшла успішно. Тепер ви можете увійти.");
-            document.getElementById('register-form').style.display = 'none';
-        }
-
-        // Функція для обробки кручення рулетки
-        function spin() {
-            if (balance < 50) {
-                showNotification("Недостатньо очків для гри.");
-                return;
-            }
-            balance -= 50;
-            document.getElementById('balance').innerText = balance;
-
-            const emojis = ['🍒', '🍋', '🍉', '⭐', '🔔'];
-            const result = [];
-            for (let i = 0; i < 3; i++) {
-                result.push(emojis[Math.floor(Math.random() * emojis.length)]);
-            }
-            document.getElementById('roulette').innerText = result.join('');
-
-            let points = 0;
-            if (result[0] === result[1] && result[1] === result[2]) {
-                if (result[0] === '🍒') points = 150;
-                else if (result[0] === '🍋') points = 1000;
-                else if (result[0] === '🍉') points = 500;
-                else if (result[0] === '⭐') points = 1000;
-                else if (result[0] === '🔔') points = 2000;
-            }
-            balance += points;
-            document.getElementById('balance').innerText = balance;
-        }
-
-        // Встановлення теми в залежності від налаштувань користувача
-        const userTheme = window.Telegram ? window.Telegram.WebApp.themeParams : null;
-        if (userTheme) {
-            document.documentElement.style.setProperty('--bg-color', userTheme.bg_color || '#ffffff');
-            document.documentElement.style.setProperty('--text-color', userTheme.text_color || '#000000');
-        }
-    </script>
+    <script src="scripts.js"></script>
 </body>
 </html>
